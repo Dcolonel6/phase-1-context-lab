@@ -1,5 +1,57 @@
 /* Your Code Here */
+const createEmployeeRecord = function(list){
+    const [firstName, familyName, title, payperHour] = list
 
+    return {
+        'timeInEvents':[],
+        'timeOutEvents':[],
+        'firstName': firstName,
+        'title': title,
+        'payPerHour': payperHour,
+        'familyName': familyName
+    }
+
+}
+const createEmployeeRecords = function(employeesDetails){
+    const employeeRecords = []
+    for(const employeeList of employeesDetails){
+        employeeRecords.push(createEmployeeRecord(employeeList))
+    }
+    return employeeRecords
+
+}
+const createTimeInEvent = function (dateStamp){
+    const [yearStr,monthStr,dayStr,timeStr] = dateStamp.split((/\s|-/))
+    const timeObject = {
+        'type': 'TimeIn',
+        'hour': parseInt(timeStr,10),
+        'date':`${yearStr}-${monthStr}-${dayStr}` 
+    }
+    this['timeInEvents'].push(timeObject)
+    return this
+}
+function createTimeOutEvent(dateStamp){
+    const [yearStr,monthStr,dayStr,timeStr] = dateStamp.split((/\s|-/))
+    const timeObject = {
+        'type': 'TimeOut',
+        'hour': parseInt(timeStr,10),
+        'date':`${yearStr}-${monthStr}-${dayStr}` 
+    }
+    this['timeOutEvents'].push(timeObject)
+    return this
+}
+function hoursWorkedOnDate(dateWithoutTime){
+    const {timeInEvents, timeOutEvents } = this
+    const timeIn = timeInEvents.find(({date}) => date === dateWithoutTime)
+    const timeOut = timeOutEvents.find(({date}) => date === dateWithoutTime)      
+     
+    return (parseInt(timeOut['hour']) - parseInt(timeIn['hour'])) / 100
+}
+function wagesEarnedOnDate(dateStr){
+    const hoursWorked = hoursWorkedOnDate.call(this,dateStr)
+    return hoursWorked * this['payPerHour']
+
+}
 /*
  We're giving you this function. Take a look at it, you might see some usage
  that's new and different. That's because we're avoiding a well-known, but
@@ -21,3 +73,15 @@ const allWagesFor = function () {
     return payable
 }
 
+const findEmployeeByFirstName = function(srcArray,firstName){
+    return srcArray.find(employee => employee['firstName'] === firstName)
+}
+
+function calculatePayroll(employeeRecords){
+    let sumOfPay = 0
+    for(const employeeRecord of employeeRecords){
+        sumOfPay += allWagesFor.call(employeeRecord)
+    }
+    return sumOfPay
+
+}
